@@ -58,7 +58,7 @@ $(ROOTDIR)/citation-style.csl:
 		https://www.zotero.org/styles/ieee
 
 %.tex: $(ROOTDIR)/citation-style.csl
-	@echo Generating latex...                                                 \
+	@echo Generating latex...;                                                \
 	mkdir -p $(INTERMEDIATEDIR);                                              \
 		pandoc $(CONTENTDIR)/metadata.yml $(FILES)                            \
 			--resource-path=$(CONTENTDIR)                                     \
