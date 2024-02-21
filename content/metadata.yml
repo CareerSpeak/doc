@@ -1,0 +1,29 @@
+---
+title: "App for Resume-Based Job Matching with Speech Interviews and Grammar Analysis: A Review"
+author:
+    name: [Tanmay Kulkarni, Yash Shah, Yuvraj Pardeshi, Vaishnvi Sakat]
+    guide: Sapana Bhirud
+institution: "Department of Artificial Intelligence and Machine Learning, P.E.S. Modern College of Engineering, India"
+emails:
+    email:
+        [
+            tanmay_kulkarni,
+            yash_shah,
+            yuvraj_pardeshi,
+            vaishnavi_sakat,
+            sapna.bhirud,
+        ]
+    domain: moderncoe.edu.in
+date: \today
+keywords:
+    - machine learning
+    - deep learning
+    - natural language processing
+    - speech recognition
+numbersections: yes
+link-citations: yes
+lang: en
+babel-lang: english
+biblio-style: IEEETran
+abstract: Through the advancement in natural language processing (NLP), specifically in speech recognition, fully automated complex systems functioning on voice input have started proliferating in areas such as home automation. These systems have been termed Automatic Speech Recognition Systems (ASR). In this review paper, we explore the feasibility of an end-to-end system providing speech and text based natural language processing for job interview preparation as well as recommendation of relevant job postings. We also explore existing recommender-based systems and note their limitations. This literature review would help us identify the approaches and limitations of the various similar use-cases of NLP technology for our upcoming project.
+---

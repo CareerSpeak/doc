@@ -1,0 +1,5 @@
+graph TD
+S([Start]) --> I[/Input/];
+I --> C[Tokenization];
+C --> Grammar[[LanguageTool]]
+Grammar --> |Suggestion| S

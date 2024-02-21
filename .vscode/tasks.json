@@ -1,0 +1,74 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "pdf",
+            "type": "shell",
+            "command": "",
+            "args": [
+                "make",
+                "paper.pdf",
+                "cleanIntermediate"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "dedicated",
+                "close": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "publish",
+            "type": "shell",
+            "command": "",
+            "args": [
+                "make",
+                "publish",
+                "cleanIntermediate"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "dedicated",
+                "close": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "publishIntermediate",
+            "type": "shell",
+            "command": "",
+            "args": [
+                "make",
+                "publish"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "dedicated",
+                "close": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "clean",
+            "type": "shell",
+            "command": "",
+            "args": [
+                "make",
+                "clean"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "dedicated",
+                "close": true
+            },
+        }
+    ]
+}

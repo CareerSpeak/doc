@@ -1,0 +1,25 @@
+flowchart TD
+H[Home Page] --> Resume[/Upload Resume/]
+
+Analysis --> SkillRec[[Skills Recommender]]
+SkillRec --> |Recommendations| Analysis
+
+Resume --> |Word Vector| Analysis[Resume Analysis]
+Analysis --> Grammar[[Grammar Model]]
+Grammar --> |Corrections| Analysis
+
+Analysis --> |Suggestions| Resume
+Resume --> Keys[[Keyword Extraction]]
+
+PreKeys[(Preset Keywords)] --> Keys
+
+Grammar --> NLP
+NLP --> Grammar
+Keys --> |Categories| Interview[[Interview Questions]]
+Interview --> NLP[[NLP Model]]
+NLP --> |Score for Answer| Score[Score for Interview]
+
+Keys --> |Keywords| Recommender[[Job Recommendation Model]]
+PostingData[(Job Posting Data From Employers)] --> Recommender
+Recommender --> |Recommendations| Filter[[Filtering by Location, etc]]
+Filter --> Output[List of Recommended Job Postings]
