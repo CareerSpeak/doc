@@ -33,14 +33,16 @@ define SED
 endef
 
 define ZIP
-	$(eval $@_ZIP_FILE = $(1))
-	$(eval $@_CONTENTS = $(2))
+	$(eval $@_LOCATION = $(1))
+	$(eval $@_ZIP_FILE = $(2))
+	$(eval $@_CONTENTS = $(3))
 
 	$(eval $@_WINDOWS_ZIP = (Compress-Archive -Force -Path $($@_CONTENTS) -DestinationPath $($@_ZIP_FILE)))
 
-	$(eval $@_ZIP = zip -qr $($@_ZIP_FILE) $($@_CONTENTS))
+	$(eval $@_ZIP = zip -r $($@_ZIP_FILE) $($@_CONTENTS))
 
-	$(if $(findstring $(UNAME),Windows),$($@_WINDOWS_ZIP),$($@_ZIP))
+	cd $($@_LOCATION);                                                        \
+		$(if $(findstring $(UNAME),Windows),$($@_WINDOWS_ZIP),$($@_ZIP))
 endef
 
 define MKDIR
@@ -53,38 +55,59 @@ define MKDIR
 	$(if $(findstring $(UNAME),Windows),$($@_WINDOWS_MKDIR),$($@_MKDIR))
 endef
 
+define CP
+	$(eval $@_SOURCE = $(1))
+	$(eval $@_DESTINATION = $(2))
+
+	$(eval $@_WINDOWS_CP = XCOPY /E $($@_SOURCE) $($@_DESTINATION))
+
+	$(eval $@_CP = cp -r $($@_SOURCE) $($@_DESTINATION))
+
+	$(if $(findstring $(UNAME),Windows),$($@_WINDOWS_CP),$($@_CP))
+endef
+
+define RM
+	$(eval $@_DIR = $(1))
+
+	$(eval $@_WINDOWS_RM = RMDIR /S /Q $($@_DIR))
+
+	$(eval $@_RM = rm -rf $($@_DIR))
+
+	$(if $(findstring $(UNAME),Windows),$($@_WINDOWS_RM),$($@_RM))
+endef
+
 $(ROOTDIR)/citation-style.csl:
 	@curl -o citation-style.csl                                               \
 		https://www.zotero.org/styles/ieee
 
 %.tex: $(ROOTDIR)/citation-style.csl
 	@echo Generating latex...;                                                \
-	mkdir -p $(INTERMEDIATEDIR);                                              \
-		pandoc $(CONTENTDIR)/metadata.yml $(FILES)                            \
-			--resource-path=$(CONTENTDIR)                                     \
-			--from=markdown                                                   \
-			--bibliography=$(CONTENTDIR)/bibliography.bib                     \
-			--csl=$(ROOTDIR)/citation-style.csl                               \
-			--filter=pandoc-crossref                                          \
-			--natbib                                                          \
-			--template=$(ROOTDIR)/templates/template.latex                    \
-			--pdf-engine=pdflatex                                             \
-			--to=latex                                                        \
-			--output=$(INTERMEDIATEDIR)/$@;                                   \
-	$(call SED,\\usepackage{natbib},\\usepackage[$(NATBIB_OPTIONS)]{natbib},$(INTERMEDIATEDIR)/$@);\
-	echo Generated $(INTERMEDIATEDIR)/$@
+	$(call MKDIR,$(INTERMEDIATEDIR));                                         \
+	pandoc $(CONTENTDIR)/metadata.yml $(FILES)                                \
+		--resource-path=$(CONTENTDIR)                                         \
+		--from=markdown                                                       \
+		--bibliography=$(CONTENTDIR)/bibliography.bib                         \
+		--csl=$(ROOTDIR)/citation-style.csl                                   \
+		--filter=pandoc-crossref                                              \
+		--natbib                                                              \
+		--template=$(ROOTDIR)/templates/template.latex                        \
+		--pdf-engine=pdflatex                                                 \
+		--to=latex                                                            \
+		--output=$@;                                                          \
+	$(call SED,\\usepackage{natbib},\\usepackage[$(NATBIB_OPTIONS)]{natbib},$@);\
+	echo Generated $@
 
-%.pdf: %.tex
-	@echo Generating PDF;                                                     \
-	mkdir -p $(INTERMEDIATEDIR)/content;                                      \
-	cp $(CONTENTDIR)/bibliography.bib $(INTERMEDIATEDIR)/content;             \
-	cp $(CONTENTDIR)/images $(INTERMEDIATEDIR)/content -r;                    \
+%.pdf: $(INTERMEDIATEDIR)/%.tex
+	@echo Generating PDF...;                                                  \
+	$(call MKDIR,$(INTERMEDIATEDIR)/content);                                 \
+	$(call CP,$(CONTENTDIR)/bibliography.bib,$(INTERMEDIATEDIR)/content);     \
+	$(call CP,$(CONTENTDIR)/images,$(INTERMEDIATEDIR)/content);               \
 	cd $(INTERMEDIATEDIR);                                                    \
 		pdflatex --interaction=batchmode paper;                               \
 		bibtex paper;                                                         \
 		pdflatex --interaction=batchmode paper;                               \
 		pdflatex --interaction=batchmode paper;                               \
-		cp $(INTERMEDIATEDIR)/$@ $(BUILDDIR);                                 \
+	$(call CP,$(INTERMEDIATEDIR)/$@,$(BUILDDIR));                             \
 	echo Generated $(BUILDDIR)/$@
 
 .PHONY: $(INTERMEDIATEDIR)/ publish cleanIntermediate clean
@@ -92,11 +115,10 @@ $(ROOTDIR)/citation-style.csl:
 $(INTERMEDIATEDIR)/: paper.pdf
 
 publish: $(INTERMEDIATEDIR)/$(wildcard *.pdf)
-	@cd $(INTERMEDIATEDIR);                                                   \
-		$(call ZIP,../paper.zip,*.bbl *.tex content)
+	@$(call ZIP,$(INTERMEDIATEDIR),../paper.zip,./*.bbl ./*.tex content/images/*.pdf)
 
 cleanIntermediate:
-	@rm -rf $(INTERMEDIATEDIR)
+	@$(call RM,$(INTERMEDIATEDIR))
 
 clean:
-	@rm -rf $(BUILDDIR)
+	@$(call RM,$(BUILDDIR))
