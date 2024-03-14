@@ -7,7 +7,7 @@ else
     UNAME := $(patsubst MINGW%,MSYS,$(UNAME))
 endif
 
-ROOTDIR := $(shell pwd)
+ROOTDIR := $(CURDIR)
 CONTENTDIR := $(ROOTDIR)/content
 BUILDDIR := $(ROOTDIR)/build
 INTERMEDIATEDIR := $(BUILDDIR)/intermediate
