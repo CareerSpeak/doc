@@ -20,7 +20,7 @@ define SED
 	$(eval $@_REPLACEMENT = $(2))
 	$(eval $@_FILE = $(3))
 
-	$(eval $@_WINDOWS_REPL_NON_ESCAPED = $(shell $("$($@_REPLACEMENT)" -Replace "\\\\","\")))
+	$(eval $@_WINDOWS_REPL_NON_ESCAPED = $(shell pwsh -Command $("$($@_REPLACEMENT)" -Replace "\\\\","\")))
 
 	$(eval $@_EXPR_COMMA_REPL = '$($@_EXPRESSION)','$($@_WINDOWS_REPL_NON_ESCAPED)')
 
@@ -29,7 +29,7 @@ define SED
 
 	$(eval $@_SED = sed -i 's|$($@_EXPRESSION)|$($@_REPLACEMENT)|' $($@_FILE))
 
-	$(if $(findstring $(UNAME),Windows),$($@_WINDOWS_SED) | $($@_WINDOWS_UPDATE_FILE),$($@_SED))
+	$(if $(findstring $(UNAME),Windows),pwsh -Command $($@_WINDOWS_SED) | $($@_WINDOWS_UPDATE_FILE),$($@_SED))
 endef
 
 define ZIP
@@ -37,7 +37,7 @@ define ZIP
 	$(eval $@_ZIP_FILE = $(2))
 	$(eval $@_CONTENTS = $(3))
 
-	$(eval $@_WINDOWS_ZIP = (Compress-Archive -Force -Path $($@_CONTENTS) -DestinationPath $($@_ZIP_FILE)))
+	$(eval $@_WINDOWS_ZIP = pwsh -Command (Compress-Archive -Force -Path $($@_CONTENTS) -DestinationPath $($@_ZIP_FILE)))
 
 	$(eval $@_ZIP = zip -r $($@_ZIP_FILE) $($@_CONTENTS))
 
@@ -48,7 +48,7 @@ endef
 define MKDIR
 	$(eval $@_DIRECTORY = $(1))
 
-	$(eval $@_WINDOWS_MKDIR = md $($@_DIRECTORY) -ea 0)
+	$(eval $@_WINDOWS_MKDIR = pwsh -Command md $($@_DIRECTORY) -ea 0)
 
 	$(eval $@_MKDIR = mkdir -p $($@_DIRECTORY))
 
